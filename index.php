@@ -8,7 +8,7 @@
     <meta name="author" content="MBOCWW Board">
 
     <title>MBOCWCESS Portal</title>
-    <link rel="icon" href="C:\wamp64\www\mbocww\public\assets\img\homepage\favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets\img\homepage\favicon.ico" type="image/x-icon">
 
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -166,24 +166,24 @@
     <!-- Main Header -->
     <div class="main-header">
         <div class="header-left">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\mahaMBOCWLogo.jpg" loading="lazy" alt="Maharashtra Map Logo">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\mbocw-logo.png" loading="lazy" alt="Board Logo">
+            <img src="assets\img\homepage\mahaMBOCWLogo.jpg" loading="lazy" alt="Maharashtra Map Logo">
+            <img src="assets\img\homepage\mbocw-logo.png" loading="lazy" alt="Board Logo">
         </div>
         <div class="header-center">
             <h1>महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी मंडळ</h1>
             <h2>Maharashtra Building And Other Construction Worker's Welfare Board</h2>
         </div>
         <div class="header-right">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\Maharashtra-state-copy.png" loading="lazy" alt="Gov of Maharashtra Logo">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\Ashok-Symbol.png" loading="lazy" alt="Indian Emblem">
+            <img src="assets\img\homepage\Maharashtra-state-copy.png" loading="lazy" alt="Gov of Maharashtra Logo">
+            <img src="assets\img\homepage\Ashok-Symbol.png" loading="lazy" alt="Indian Emblem">
         </div>
     </div>
 
     <!-- Subheader / Menu -->
     <div class="subheader">
         <div class="subheader-left">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\g20.png" loading="lazy" alt="G20 Logo">
-            <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\akam.png" loading="lazy" alt="Azadi Logo">
+            <img src="assets\img\homepage\g20.png" loading="lazy" alt="G20 Logo">
+            <img src="assets\img\homepage\akam.png" loading="lazy" alt="Azadi Logo">
         </div>
         <div class="subheader-title">
             MBOCWW Board CESS Portal<br><small>MAHARASHTRA GOVERNMENT</small>
@@ -195,7 +195,7 @@
             <a href="#">MAHGOV Resolution</a>
             <a href="#">Schemes</a>
             <a href="#">Contact Us</a>
-            <a href="#">Login</a>
+            <a href="login.php">Login</a>
         </div>
     </div>
 
@@ -215,16 +215,16 @@
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="C:\wamp64\www\mbocww\public\assets/img/homepage/slider/cpimg1.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 1">
+                <img src="assets/img/homepage/slider/cpimg1.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 1">
             </div>
             <div class="carousel-item">
-                <img src="C:\wamp64\www\mbocww\public\assets/img/homepage/slider/cpimg2.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 2">
+                <img src="assets/img/homepage/slider/cpimg2.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 2">
             </div>
             <div class="carousel-item">
-                <img src="C:\wamp64\www\mbocww\public\assets/img/homepage/slider/cpimg3.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 3">
+                <img src="assets/img/homepage/slider/cpimg3.jpg" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 3">
             </div>
             <div class="carousel-item">
-                <img src="C:\wamp64\www\mbocww\public\assets/img/homepage/slider/cpimg4.png" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 4">
+                <img src="assets/img/homepage/slider/cpimg4.png" loading="lazy" class="d-block w-100" alt="Construction workers at site - banner 4">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
@@ -250,12 +250,12 @@
                 </div>
                 <!-- Image -->
                 <div class="col-md-6 text-center">
-                    <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\aboutusRgt.jpg" loading="lazy" alt="About Us Illustration" class="img-fluid" style="max-height: 400px;">
+                    <img src="assets\img\homepage\aboutusRgt.jpg" loading="lazy" alt="About Us Illustration" class="img-fluid" style="max-height: 400px;">
                 </div>
             </div>
         </div>
         <!-- Bottom Decorative Strip -->
-        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
+        <img src="assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
     </section>
 
     <!-- Key Functionaries Section -->
@@ -268,7 +268,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\Deputi chf minstr Hon. Devendra Gangadhar Rao Fadnavis.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Devendra Fadnavis">
+                        <img src="assets\img\homepage\Deputi chf minstr Hon. Devendra Gangadhar Rao Fadnavis.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Devendra Fadnavis">
                         <h5 class="card-title fw-bold">Hon. Devendra Fadnavis</h5>
                         <p class="card-text">Honourable Chief Minister,<br>Maharashtra State</p>
                     </div>
@@ -279,7 +279,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\chf mins Eknath Sambhaji Shinde.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Eknath Shinde">
+                        <img src="assets\img\homepage\chf mins Eknath Sambhaji Shinde.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Eknath Shinde">
                         <h5 class="card-title fw-bold">Hon. Eknath Sambhaji Shinde</h5>
                         <p class="card-text">Honourable Deputy Chief Minister,<br>Maharashtra State</p>
                     </div>
@@ -290,7 +290,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\ajit pawar.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Ajit Pawar">
+                        <img src="assets\img\homepage\ajit pawar.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Ajit Pawar">
                         <h5 class="card-title fw-bold">Hon. Ajit Pawar</h5>
                         <p class="card-text">Honourable Deputy Chief Minister,<br>Maharashtra State</p>
                     </div>
@@ -301,7 +301,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\labour_minister.jpg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Aakash Fundkar">
+                        <img src="assets\img\homepage\labour_minister.jpg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Aakash Fundkar">
                         <h5 class="card-title fw-bold">Hon. Aakash Sunita Pandurang Fundkar</h5>
                         <p class="card-text">Honourable Minister of Labour</p>
                     </div>
@@ -312,7 +312,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\I. A. Kundan.png" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="I.A. Kundan">
+                        <img src="assets\img\homepage\I. A. Kundan.png" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="I.A. Kundan">
                         <h5 class="card-title fw-bold">Smt I. A. Kundan</h5>
                         <p class="card-text">Principal Secretary,<br>Labour Department</p>
                     </div>
@@ -323,7 +323,7 @@
                 <div class="col-md-4 col-sm-6">
                     <div class="card text-center border border-warning shadow-sm h-100" style="border-radius: 15px;">
                     <div class="card-body">
-                        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\Vivek-Shankar-Kumbhar-Sir.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Vivek Kumbhar">
+                        <img src="assets\img\homepage\Vivek-Shankar-Kumbhar-Sir.jpeg" class="rounded-circle mb-3" width="100" height="100" loading="lazy" alt="Vivek Kumbhar">
                         <h5 class="card-title fw-bold">Mr. Vivek Shankar Kumbhar</h5>
                         <p class="card-text">Secretary cum CEO,<br>MBOCWWB</p>
                     </div>
@@ -333,7 +333,7 @@
             </div>
         </div>
         <!-- Bottom Decorative Strip -->
-        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
+        <img src="assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
     </section>
 
     <!-- Schemes Section -->
@@ -348,7 +348,7 @@
             </div>
         </div>
         <!-- Bottom Decorative Strip -->
-        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
+        <img src="assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
     </section>
 
     <!-- Contact Us Section -->
@@ -382,7 +382,7 @@
             </div>
         </div>
         <!-- Bottom Decorative Strip -->
-        <img src="C:\wamp64\www\mbocww\public\assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
+        <img src="assets\img\homepage\about-footer.png" loading="lazy" alt="About Us Footer" class="img-fluid" >
     </section>
 
     <!-- Footer Section -->
