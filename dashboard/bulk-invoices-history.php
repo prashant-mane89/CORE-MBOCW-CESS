@@ -43,6 +43,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
   <title>MBOCWCESS Portal | Bulk Invoice Upload History</title>
+  <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">

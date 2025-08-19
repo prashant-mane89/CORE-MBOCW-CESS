@@ -15,6 +15,7 @@ $paymentId = isset($_GET['payment_id']) ? htmlspecialchars($_GET['payment_id']) 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Success</title>
+    <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
     <!-- Include Tailwind CSS via CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>

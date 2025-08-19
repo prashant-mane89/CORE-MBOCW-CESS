@@ -147,6 +147,7 @@ try {
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <title>MBOCWCESS Portal | Reports</title>
+    <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">

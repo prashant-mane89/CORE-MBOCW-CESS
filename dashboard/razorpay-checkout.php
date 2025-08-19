@@ -40,6 +40,7 @@ $userMobile = isset($_SESSION['user_mobile']) ? $_SESSION['user_mobile'] : '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Razorpay Checkout</title>
+    <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
     <!-- Include Razorpay Checkout script from their official CDN. -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <!-- Include Tailwind CSS for a modern and responsive design. -->

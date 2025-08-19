@@ -15,6 +15,7 @@ $errorMessage = isset($_GET['error']) ? htmlspecialchars($_GET['error']) : 'An u
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Failed</title>
+    <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
     <!-- Include Tailwind CSS via CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
