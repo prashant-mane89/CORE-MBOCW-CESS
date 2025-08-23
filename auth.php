@@ -19,8 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->execute();
     $stmt->store_result();
 
-    //echo '<pre>'; print_r($stmt->num_rows); exit;
-
     // Check if user exists
     if ($stmt->num_rows == 1) {
         $stmt->bind_result($id, $name, $userEmail, $hashedPassword);

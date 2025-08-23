@@ -8,7 +8,7 @@
     <meta name="author" content="MBOCWW Board">
 
     <title>MBOCWCESS Portal</title>
-    <link rel="icon" href="assets\img\favicon_io\favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -196,6 +196,7 @@
             <a href="#">Schemes</a>
             <a href="#">Contact Us</a>
             <a href="login.php">Login</a>
+            <a href="register.php">Register</a>
         </div>
     </div>
 
