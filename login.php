@@ -1,6 +1,6 @@
 <?php 
-$password = md5('superadmin');
-//echo '<pre>'; print_r($password); exit;
+session_start();
+$password = md5('superadmin'); // demo password generation
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,6 +10,7 @@ $password = md5('superadmin');
   <title>MBOCWCESS Portal Login</title>
   <link rel="icon" href="assets/img/favicon_io/favicon.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -110,6 +111,10 @@ $password = md5('superadmin');
     <div class="form-section">
       <h1>MBOCWCESS Portal</h1>
       <p>MBOCW CESS</p>
+      <!-- Error Message -->
+      <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+      <?php endif; ?>
       <form action="auth.php" method="post">
         <input type="email" name="email" placeholder="Email Address" required />
         <input type="password" name="password" placeholder="Password" required />
@@ -120,5 +125,8 @@ $password = md5('superadmin');
         <img src="http://localhost/CORE-MBOCW-CESS/assets/img/mbocwcess-login.png" alt="POS Illustration" />
     </div>
   </div>
+  
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,9 +1,19 @@
 <?php
+session_start();
 require_once 'config/db.php';
 
 // Fetch required dropdown values
 $localAuthorityTypes = $conn->query("SELECT id, name FROM local_authority_types")->fetch_all(MYSQLI_ASSOC);
 $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_ASSOC);
+
+$old = $_SESSION['old'] ?? [];
+$error = $_SESSION['error'] ?? '';
+$success = $_SESSION['success'] ?? '';
+
+if (isset($_SESSION['success']) && !empty($_SESSION['success'])){
+    unset($_SESSION['error']);
+    unset($_SESSION['old']);
+}
 
 ?>
 <!DOCTYPE html>
@@ -220,22 +230,31 @@ $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_AS
     <section class="py-5 bg-light">
 	<div class="container mb-3">
 		<h2 class="text-center fw-bold mb-4">Local Authority With CAFO Registration</h2>
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger"><?php echo $_SESSION['error']; ?></div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
 
-		<form action="http://localhost/CORE-MBOCW-CESS/save-register-form" method="POST" id="cafoRegistrationForm" class="row g-4">
-			<input type="hidden" name="_token" value="VMGEYmacOGXZTpQsTWlDZ1UdSN6chYRFio7HncOk">
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success"><?php echo $_SESSION['success']; ?></div>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
+		<form action="http://localhost/CORE-MBOCW-CESS/save-register-form.php" method="POST" id="cafoRegistrationForm" class="row g-4">
 			<!-- Local Authority Details -->
 			<h5 class="text-primary">Local Authority Details</h5>
 			<div class="col-md-6">
 				<label class="form-label">Local Authority Name <span class="text-danger">*</span></label>
-				<input type="text" class="form-control" value="" name="local_authority_name" id="local_authority_name" required>
-			    <span id="local_authority_name_error" class="error invalid-feedback d-none">This board office name already taken</span>
+				<input type="text" class="form-control" value="<?= htmlspecialchars($old['local_authority_name'] ?? '') ?>" name="local_authority_name" id="local_authority_name" required>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">Local Authority Type <span class="text-danger">*</span></label>
 				<select class="form-select" name="local_authority_type" id="local_authority_type" required>
 					<option value="">Select Local Authority Type</option>
                     <?php foreach ($localAuthorityTypes as $type): ?>
-                        <option value="<?= htmlspecialchars($type['id']) ?>"><?= htmlspecialchars($type['name']) ?></option>
+                        <option value="<?= $type['id'] ?>" 
+                            <?= ($old['local_authority_type'] ?? '') == $type['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($type['name']) ?>
+                        </option>
                     <?php endforeach; ?>
 				</select>
 			</div>
@@ -247,27 +266,27 @@ $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_AS
 			<h5 class="text-primary">CAFO Personal Details</h5>
 			<div class="col-md-6">
 				<label class="form-label">Full Name <span class="text-danger">*</span></label>
-				<input type="text" value="" class="form-control" name="cafo_name" id="cafo_name" placeholder="Enter Full Name" required>
+				<input type="text" value="<?= htmlspecialchars($old['cafo_name'] ?? '') ?>" class="form-control" name="cafo_name" id="cafo_name" placeholder="Enter Full Name" required>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">Email <span class="text-danger">*</span></label>
 				<div class="input-group">
-					<input type="email" class="form-control" id="cafo_email" value="" name="cafo_email" placeholder="Enter Email" required>
+					<input type="email" value="<?= htmlspecialchars($old['cafo_email'] ?? '') ?>" class="form-control" id="cafo_email" value="" name="cafo_email" placeholder="Enter Email" required>
 					<button class="btn btn-outline-secondary" type="button" id="verifyEmailBtn">Verify</button>
 				</div>
 				<div class="input-group d-none email_verifcation_code" id="div_email_verifcation_code">
-					<input type="text" class="form-control" id="email_verifcation_code" name="email_verifcation_code" placeholder="Enter Verification code" required>
+					<input type="text" value="<?= htmlspecialchars($old['email_verifcation_code'] ?? '') ?>" class="form-control" id="email_verifcation_code" name="email_verifcation_code" placeholder="Enter Verification code" >
 					<button class="btn btn-outline-secondary" type="button" id="email_verifcation_button">Verify Code</button>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">Mobile Number <span class="text-danger">*</span></label>
 				<div class="input-group">
-					<input type="tel" value="" class="form-control numeric" id="cafo_mobile" name="cafo_mobile" placeholder="Enter Mobile No" maxlength="10" required>
+					<input type="tel" value="<?= htmlspecialchars($old['cafo_mobile'] ?? '') ?>" class="form-control numeric" id="cafo_mobile" name="cafo_mobile" placeholder="Enter Mobile No" maxlength="10" required>
 					<button class="btn btn-outline-secondary" type="button" id="verifyMobileBtn">Verify</button>
 				</div>
 				<div class="input-group d-none mobile_verifcation_code" id="div_mobile_verifcation_code">
-					<input type="text" class="form-control" id="mobile_verifcation_code" name="mobile_verifcation_code" placeholder="Enter Verification code" required>
+					<input type="text" value="<?= htmlspecialchars($old['mobile_verifcation_code'] ?? '') ?>" class="form-control" id="mobile_verifcation_code" name="mobile_verifcation_code" placeholder="Enter Verification code" >
 					<button class="btn btn-outline-secondary" type="button" id="mobile_verifcation_button">Verify Code</button>
 				</div>
 			</div>
@@ -275,28 +294,28 @@ $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_AS
 				<label class="form-label">Gender <span class="text-danger">*</span></label>
 				<select class="form-select" name="cafo_gender" id="cafo_gender" required>
 					<option value="">Select Gender</option>
-					<option value="M">Male</option>
-					<option value="F">Female</option>
-					<option value="O">Other</option>
+					<option value="M" <?= ($old['cafo_gender'] ?? '') == 'M' ? 'selected' : '' ?>>Male</option>
+					<option value="F" <?= ($old['cafo_gender'] ?? '') == 'F' ? 'selected' : '' ?>>Female</option>
+					<option value="O" <?= ($old['cafo_gender'] ?? '') == 'O' ? 'selected' : '' ?>>Other</option>
 				</select>
 			</div>
 			<div class="col-md-12">
 				<label class="form-label">Address <span class="text-danger">*</span></label>
-				<textarea class="form-control" value="" name="cafo_address" id="cafo_address" rows="2" placeholder="Enter Address" required> </textarea>
+				<textarea class="form-control" name="cafo_address" id="cafo_address" rows="2" placeholder="Enter Address" required><?= htmlspecialchars($old['cafo_address'] ?? '') ?> </textarea>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">Aadhaar No <span class="text-danger">*</span></label>
-				<input type="text" class="form-control" value="" name="aadhaar_no" id="aadhaar" maxlength="12" placeholder="Enter 12 digit Aadhaar" required>
+				<input type="text" class="form-control" value="<?= htmlspecialchars($old['aadhaar_no'] ?? '') ?>" name="aadhaar_no" id="aadhaar" maxlength="12" placeholder="Enter 12 digit Aadhaar" required>
                 <div id="aadhaarError" class="error"></div>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">PAN Card No <span class="text-danger">*</span></label>
-				<input type="text" class="form-control" value="" name="pan_no" id="pancard" maxlength="10" placeholder="Enter 10 character PAN" required>
+				<input type="text" class="form-control" value="<?= htmlspecialchars($old['pan_no'] ?? '') ?>" name="pan_no" id="pancard" maxlength="10" placeholder="Enter 10 character PAN" required>
                 <div id="panError" class="error"></div>
 			</div>
 			<div class="col-md-6">
 				<label class="form-label">GSTN </label>
-				<input type="text" class="form-control " value=""  name="gstn" id="gstn" maxlength="16" placeholder="Enter 15 character GSTN" required>
+				<input type="text" class="form-control " value="<?= htmlspecialchars($old['gstn'] ?? '') ?>"  name="gstn" id="gstn" maxlength="16" placeholder="Enter 15 character GSTN" required>
                 <div id="gstnError" class="error"></div>
 			</div>
 			<div class="col-md-6">
@@ -329,7 +348,8 @@ $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_AS
 			</div>
 
 			<div class="col-12 text-center">
-				<button type="submit" class="btn btn-primary px-4 py-2 register-button" disabled>Register</button>
+				<button type="submit" class="btn btn-primary px-4 py-2 register-button" >Register</button>
+                <button type="reset" class="btn btn-warning">Reset</button>
 			</div>
 		</form>
 	</div>
@@ -428,201 +448,6 @@ $districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_AS
         });
 	});
 
-	// $('#verifyEmailBtn').on('click', function() {
-	// 	let email = $('#cfo_email').val();
-	// 	let cfo_name = $('#full_name').val();
-	// 	let $thisButton = $(this);
-	// 	if (!email || !email.includes('@') || !email.includes('.')) {
-	// 		alert('Please enter a valid email address.');
-	// 		return;
-	// 	}
-	// 	$.ajaxSetup({
-	// 		headers: {
-	// 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	// 		}
-	// 	});
-	// 	$.ajax({
-	// 		url: '/email-verification',
-	// 		method: 'POST',
-	// 		data: {
-	// 			email: email,
-	// 			full_name: cfo_name ? cfo_name : 'User'
-	// 		},
-	// 		success: function(response) {
-	// 			if (response.success) {
-	// 				$('#cfo_email').prop('readonly', true);
-	// 				$('#div_email_verifcation_code').removeClass('d-none');
-	// 			} else {
-	// 				console.log(response);
-	// 			}
-	// 		},
-	// 		error: function(xhr) {
-	// 			if (xhr.status === 400) {
-	// 				let errors = xhr.responseJSON.error;
-	// 				alert(errors)
-	// 			} else if (xhr.responseJSON && xhr.responseJSON.message) {
-	// 				alert(xhr.responseJSON.message);
-	// 			}
-	// 		}
-	// 	});
-	// });
-
-	// $('#email_verifcation_button').on('click', function() {
-	// 	let code = $('#email_verifcation_code').val();
-	// 	let email = $('#cfo_email').val();
-	// 	$.ajaxSetup({
-	// 		headers: {
-	// 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	// 		}
-	// 	});
-	// 	$.ajax({
-	// 		url: '/register-email-verified',
-	// 		method: 'POST',
-	// 		data: {
-	// 			code: code,
-	// 			email: email
-	// 		},
-	// 		success: function(response) {
-	// 			if (response.success) {
-	// 				emailVerification = true;
-	// 				$('#div_email_verifcation_code').addClass('d-none');
-	// 				// $('#cfo_email').prop('disabled', false);
-	// 				$('#verifyEmailBtn').removeClass('btn-outline-secondary').text('Verified').addClass('btn-outline-success').prop('disabled', true);
-	// 			}
-	// 		},
-	// 		error: function(xhr) {
-	// 			let errorMessage = 'An error occurred. Please try again.';
-	// 			if (xhr.status === 400) {
-	// 				let errors = xhr.responseJSON.error;
-	// 				alert(errors)
-	// 			} else if (xhr.responseJSON && xhr.responseJSON.message) {
-	// 				alert(xhr.responseJSON.message);
-	// 			}
-	// 		}
-	// 	});
-	// });
-
-	// $('#verifyMobileBtn').on('click', function() {
-	// 	let email = $('#cfo_email').val();
-	// 	let mobileNumber = $('#cfo_mobile').val();
-	// 	let cfo_name = $('#full_name').val();
-	// 	let $thisButton = $(this);
-	// 	const mobileRegex = /^\d{10}$/;
-	// 	if (!mobileRegex.test(mobileNumber)) {
-	// 		alert('Please enter a valid 10-digit mobile number.');
-	// 		$('#cfo_mobile').focus();
-	// 		return;
-	// 	}
-	// 	$.ajaxSetup({
-	// 		headers: {
-	// 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	// 		}
-	// 	});
-	// 	$.ajax({
-	// 		url: '/mobile-verification',
-	// 		method: 'POST',
-	// 		data: {
-	// 			mobile: mobileNumber,
-	// 			email: email,
-	// 			full_name: cfo_name ? cfo_name : 'User'
-	// 		},
-	// 		success: function(response) {
-	// 			if (response.success) {
-	// 				$('#cfo_mobile').prop('readonly', true);
-	// 				$('#div_mobile_verifcation_code').removeClass('d-none');
-	// 			}
-	// 		},
-	// 		error: function(xhr) {
-	// 			let errorMessage = 'An error occurred. Please try again.';
-	// 			if (xhr.status === 400) {
-	// 				let errors = xhr.responseJSON.error;
-	// 				alert(errors)
-	// 			} else if (xhr.responseJSON && xhr.responseJSON.message) {
-	// 				alert(xhr.responseJSON.message);
-	// 			}
-	// 		}
-	// 	});
-	// });
-
-	// $('#mobile_verifcation_button').on('click', function() {
-	// 	let code = $('#mobile_verifcation_code').val();
-	// 	let mobile = $('#cfo_mobile').val();
-	// 	$.ajaxSetup({
-	// 		headers: {
-	// 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-	// 		}
-	// 	});
-	// 	$.ajax({
-	// 		url: '/register-mobile-verified',
-	// 		method: 'POST',
-	// 		data: {
-	// 			code: code,
-	// 			mobile: mobile
-	// 		},
-	// 		success: function(response) {
-	// 			if (response.success) {
-	// 				if (emailVerification) {
-	// 					$('.register-button').prop('disabled', false);
-	// 				}
-	// 				$('#div_mobile_verifcation_code').addClass('d-none');
-	// 				// $('#cfo_email').prop('disabled', false);
-	// 				$('#verifyMobileBtn').removeClass('btn-outline-secondary').text('Verified').addClass('btn-outline-success').prop('disabled', true);
-	// 			}
-	// 		},
-	// 		error: function(xhr) {
-	// 			let errorMessage = 'An error occurred. Please try again.';
-	// 			if (xhr.status === 400) {
-	// 				let errors = xhr.responseJSON.error;
-	// 				alert(errors)
-	// 			} else if (xhr.responseJSON && xhr.responseJSON.message) {
-	// 				alert(xhr.responseJSON.message);
-	// 			}
-	// 		}
-	// 	});
-	// });
-</script>
-<script>
-    document.getElementById("cafoRegistrationForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      let aadhaar = document.getElementById("aadhaar").value.trim();
-      let pan = document.getElementById("pan").value.trim();
-      let gstn = document.getElementById("gstn").value.trim();
-
-      let aadhaarRegex = /^\d{12}$/;
-      let panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i;
-      let gstnRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/i;
-
-      let isValid = true;
-
-      // Aadhaar Validation
-      if (!aadhaarRegex.test(aadhaar)) {
-        document.getElementById("aadhaarError").textContent = "❌ Aadhaar must be exactly 12 digits.";
-        isValid = false;
-      } else {
-        document.getElementById("aadhaarError").textContent = "";
-      }
-
-      // PAN Validation
-      if (!panRegex.test(pan)) {
-        document.getElementById("panError").textContent = "❌ PAN must be 10 characters (e.g. ABCDE1234F).";
-        isValid = false;
-      } else {
-        document.getElementById("panError").textContent = "";
-      }
-
-      // GSTN Validation
-      if (!gstnRegex.test(gstn)) {
-        document.getElementById("gstnError").textContent = "❌ GSTN must be 15 characters (e.g. 22AAAAA0000A1Z5).";
-        isValid = false;
-      } else {
-        document.getElementById("gstnError").textContent = "";
-      }
-
-      if (isValid) {
-        alert("✅ All inputs are valid!");
-      }
-    });
 </script>
 </body>
 
