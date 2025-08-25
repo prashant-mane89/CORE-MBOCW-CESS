@@ -6,40 +6,32 @@ if (!isset($_SESSION['user_id'])) {
 }
 require_once '../config/db.php';
 
-if (!isset($_GET['id'])) {
-    die("Missing ID.");
+// Get project ID
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    $_SESSION['error'] = "Invalid project ID.";
+    header("Location: projects.php");
+    exit;
 }
-$id = intval($_GET['id']);
+$project_id = intval($_GET['id']);
 
-$query = "
-SELECT 
-    b.id AS bill_id,
-    b.title,
-    b.total_amount,
-    COALESCE(SUM(h.amount_paid), 0) AS total_paid,
-    (b.total_amount - COALESCE(SUM(h.amount_paid), 0)) AS balance_amount,
-    b.payment_status,
-    b.bill_date,
-    b.bill_photo,
-    h.payment_mode
-FROM bills b
-LEFT JOIN bill_payment_history h ON h.bill_id = b.id
-WHERE b.id = ?
-AND b.deleted_at IS NULL
-GROUP BY b.id
-ORDER BY b.created_at DESC";
-
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $id);
+// Fetch project data
+$stmt = $conn->prepare("SELECT * FROM projects WHERE id = ?");
+$stmt->bind_param("i", $project_id);
 $stmt->execute();
-$result = $stmt->get_result();
-$bill = $result->fetch_assoc();
+$project = $stmt->get_result()->fetch_assoc();
 
-if (!$bill) {
-    die("Bill not found.");
-}
+// Fetch required dropdown values
+$categories = $conn->query("SELECT id, name FROM project_categories")->fetch_all(MYSQLI_ASSOC);
+$projectTypes = $conn->query("SELECT id, name FROM project_types")->fetch_all(MYSQLI_ASSOC);
+$local_authorities = $conn->query("SELECT id, name FROM local_authorities")->fetch_all(MYSQLI_ASSOC);
+$users = $conn->query("SELECT id, name FROM users")->fetch_all(MYSQLI_ASSOC);
+$employers = $conn->query("SELECT id, name FROM employers")->fetch_all(MYSQLI_ASSOC);
+$districts = $conn->query("SELECT id, name FROM districts")->fetch_all(MYSQLI_ASSOC);
+$talukas = $conn->query("SELECT id, name FROM talukas")->fetch_all(MYSQLI_ASSOC);
+$villages = $conn->query("SELECT id, name FROM villages")->fetch_all(MYSQLI_ASSOC);
 
-
+// Fetch work orders
+$work_orders = $conn->query("SELECT * FROM project_work_orders WHERE project_id = $project_id")->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <!--
@@ -52,7 +44,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>Medical POS System Desk | Edit Bill</title>
+  <title>MBOCWCESS Portal | Edit Project</title>
   <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
   <!-- Font Awesome Icons -->
@@ -79,12 +71,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Edit Bill</h1>
+            <h1 class="m-0 text-dark">Edit Project</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Edit Bill</li>
+              <li class="breadcrumb-item active">Edit Project</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -97,16 +89,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="container-fluid">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Edit Bill</h3>
+                    <h3 class="card-title">Edit Project</h3>
                     <div class="card-tools">
-                        <a href="bills.php" class="btn btn-primary" ><i class="fas fa-eye"></i> Bill List</a> 
+                        <a href="projects.php" class="btn btn-primary" ><i class="fas fa-eye"></i> Project List</a> 
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fas fa-minus"></i></button>
                         <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove"><i class="fas fa-times"></i></button>
                     </div>
                 </div>
                 <div class="card-body p-4">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12 ">
                             <?php
                                 if (isset($_SESSION['success'])) {
                                     echo "<div class='alert alert-success'>" . $_SESSION['success'] . "</div>";
@@ -117,70 +109,201 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     unset($_SESSION['error']);
                                 }
                             ?>
-                            <form action="update-bill.php" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="bill_id" value="<?php echo $bill['bill_id']; ?>">
-                                <div class="form-group">
-                                    <label>Title</label>
-                                    <input type="text" name="title" id="title" value="<?php echo isset($bill['title'])?$bill['title']:''; ?>" class="form-control" placeholder="Eneter Bill Title (e.g BillDate-Name)" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Bill Total Amount</label>
-                                    <input type="number" name="total_amount" id="total_amount" value="<?php echo isset($bill['total_amount'])?$bill['total_amount']:''; ?>" class="form-control" placeholder="Eneter Total Bill Amount" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Bill Date</label>
-                                    <input type="date" name="bill_date" id="bill_date" value="<?php echo isset($bill['bill_date'])?$bill['bill_date']:''; ?>" class="form-control" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Payment Status</label>
-                                    <select name="payment_status" id="payment_status" class="form-control">
-                                        <option value="">Choose Payment Status</option>
-                                        <option value="Paid" <?php if($bill['payment_status']=='Paid'){echo'selected';} ?>>Paid</option>
-                                        <option value="Unpaid" <?php if($bill['payment_status']=='Unpaid'){echo'selected';} ?>>Unpaid</option>
-                                        <option value="Partial" <?php if($bill['payment_status']=='Partial'){echo'selected';} ?>>Partial</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group" id="unpaid_reason_div" style="display:none; margin-top: 10px;">
-                                    <label for="unpaid_reason">Reason for Unpaid:</label>
-                                    <input type="text" id="unpaid_reason" name="unpaid_reason" value="<?php echo isset($bill['unpaid_reason'])?$bill['unpaid_reason']:''; ?>" class="form-control" placeholder="Enter reason">
-                                </div>
-                                <div class="form-group" id="partial_amount_div" style="display:none; margin-top: 10px;">
-                                    <label for="partial_amount">Partial Payment Amount:</label>
-                                    <input type="number" id="partial_amount" name="amount_paid" value="<?php echo isset($bill['amount_paid'])?$bill['amount_paid']:''; ?>" class="form-control" min="0" step="0.01" placeholder="Enter amount">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Payment Mode</label>
-                                    <select name="payment_mode" id="payment_mode" class="form-control" required>
-                                        <option value="">Select Mode</option>
-                                        <option value="1" <?php if($bill['payment_mode']==1){echo'selected';} ?>>Cash</option>
-                                        <option value="2" <?php if($bill['payment_mode']==2){echo'selected';} ?>>Net Banking</option>
-                                        <option value="3" <?php if($bill['payment_mode']==3){echo'selected';} ?>>UPI</option>
-                                        <option value="4" <?php if($bill['payment_mode']==4){echo'selected';} ?>>Credit Card</option>
-                                        <option value="5" <?php if($bill['payment_mode']==5){echo'selected';} ?>>Debit Card</option>
-                                        <option value="6" <?php if($bill['payment_mode']==6){echo'selected';} ?>>Cheque</option>
-                                    </select>
-                                </div>
+                            <form action="save-project.php" method="post" enctype="multipart/form-data">
+                                <h3>Basic Project Information</h3>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Upload Bill Photo (optional)</label>
-                                            <input type="file" name="bill_photo" class="form-control">
+                                            <label>Project Name</label>
+                                            <input type="text" name="project_name" class="form-control" value="<?= htmlspecialchars($project['project_name']) ?>" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Bill Photo:</label>
-                                            <?php if (!empty($bill['bill_photo'])): ?>
-                                                <img src="../uploads/bills/<?php echo $bill['bill_photo']; ?>" class="img img-responsive" alt="Bill Photo" style="max-height: 150px;">
-                                            <?php endif; ?>
+                                            <label>Project Category</label>
+                                            <select name="category_id" id="category_id" class="form-control"  required>
+                                                <option value="">-- Select Category --</option>
+                                                <?php foreach ($categories as $cat): ?>
+                                                    <option value="<?= $cat['id'] ?>" <?= $cat['id']==$project['project_category_id']?'selected':'' ?>><?= $cat['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Project Type</label>
+                                            <select name="type_id" id="type_id" class="form-control" required>
+                                                <option value="">-- Select Type --</option>
+                                                <?php foreach ($projectTypes as $type): ?>
+                                                    <option value="<?= $type['id'] ?>" <?= $type['id']==$project['project_type_id']?'selected':'' ?>><?= $type['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Local Authority</label>
+                                            <select name="local_authority_id" class="form-control" required>
+                                                <option value="">-- Select Local Authority --</option>
+                                                <?php foreach ($local_authorities as $la): ?>
+                                                    <option value="<?= $la['id'] ?>" <?= $la['id']==$project['local_authority_id']?'selected':'' ?>><?= $la['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Construction Cost (₹)</label>
+                                            <input type="number" value="<?= $project['construction_cost'] ?>" name="construction_cost" id="construction_cost" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Project Start Date</label>
+                                            <input type="date" value="<?= $project['project_start_date'] ?>" name="project_start_date" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Project End Date</label>
+                                            <input type="date" value="<?= $project['project_end_date'] ?>" name="project_end_date" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Cess Amount</label>
+                                            <input type="number" value="<?= $project['cess_amount'] ?>" name="cess_amount" id="cess_amount" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h3>Project Location</h3>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>State</label>
+                                            <select name="state_id" id="state_id" class="form-control">
+                                                <option value="">Choose State</option>
+                                                <option value="14" selected>Maharashtra</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>District</label>
+                                            <select name="district_id" id="district_id" class="form-control">
+                                                <option value="">Choose District</option>
+                                                <?php foreach ($districts as $district): ?>
+                                                <option value="<?= $district['id'] ?>" <?= $district['id']==$project['district_id']?'selected':'' ?>><?= $district['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Taluka</label>
+                                            <select name="taluka_id" id="taluka_id" class="form-control">
+                                                <option value="">Choose Taluka</option>
+                                                <?php foreach ($talukas as $taluka): ?>
+                                                <option value="<?= $taluka['id'] ?>" <?= $taluka['id']==$project['taluka_id']?'selected':'' ?>><?= $taluka['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Village</label>
+                                            <select name="village_id" id="village_id" class="form-control">
+                                                <option value="">Choose Village</option>
+                                                <?php foreach ($villages as $village): ?>
+                                                <option value="<?= $village['id'] ?>" <?= $village['id']==$project['village_id']?'selected':'' ?>><?= $village['name'] ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Pin Code</label>
+                                            <input type="number" value="<?= $project['pin_code'] ?>" name="pin_code" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Project Address</label>
+                                            <input type="text" value="<?= $project['project_address'] ?>" name="project_address" class="form-control" required>
                                         </div>
                                     </div>
                                 </div>
                                 
+                                <h3>Work Order Details</h3>
+                                <!-- Wrapper where all sections go -->
+                                <div id="workOrderContainer">
+                                    <?php foreach ($work_orders as $index=>$wo): ?>
+                                    <div class="work-order-section border p-3 mb-3">
+                                        <input type="hidden" name="work_order_id[]" value="<?= $wo['id'] ?>">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Work Order Number</label>
+                                                <input type="text" value="<?= $wo['work_order_number'] ?>" name="work_order_number[]" class="form-control" placeholder="Issued work order no">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Work Order Date</label>
+                                                <input type="date" value="<?= $wo['work_order_date'] ?>" name="work_order_date[]" class="form-control" >
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Work Order Amount</label>
+                                                <input type="text" value="<?= $wo['work_order_amount'] ?>" name="work_order_amount[]" class="form-control" placeholder="Total value of work order">
+                                                <input type="hidden" name="work_order_cess_amount" value="<?= $wo['work_order_cess_amount'] ?>" >
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Approval Letter</label>
+                                                <input type="file" name="work_order_approval_letter[]" class="form-control">
+                                                <?php if ($wo['work_order_approval_letter']): ?>
+                                                    <p>Existing: <a href="../uploads/work_orders/<?= $wo['work_order_approval_letter'] ?>" target="_blank"><?= $wo['work_order_approval_letter'] ?></a></p>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Managers</label>
+                                                <select name="work_order_manager_id[]" class="form-control">
+                                                    <option value="">Choose Manager</option>
+                                                    <?php foreach ($users as $user): ?>
+                                                    <option value="<?= $user['id'] ?>" <?= $user['id']==$project['manager_id']?'selected':'' ?>><?= $user['name'] ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Engineers</label>
+                                                <select name="work_order_engineer_id[]" class="form-control">
+                                                    <option value="">Choose Engineer</option>
+                                                    <?php foreach ($users as $user): ?>
+                                                    <option value="<?= $user['id'] ?>" <?= $user['id']==$project['engineer_id']?'selected':'' ?>><?= $user['name'] ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label>Employer</label>
+                                                <select name="work_order_employer_id[]" class="form-control">
+                                                    <option value="">Choose Employer</option>
+                                                    <?php foreach ($employers as $employee): ?>
+                                                    <option value="<?= $employee['id'] ?>" <?= $user['id']==$project['employer_id']?'selected':'' ?>><?= $employee['name'] ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-danger btn-sm mt-2 float-right remove-section">Remove</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                
+                                <!-- Add More Button -->
+                                <button type="button" class="btn btn-primary btn-sm float-right mb-4" id="addMoreBtn">+ Add More</button>
+                                
+                                <br/><br/>
                                 <button type="submit" class="btn btn-info">Submit</button>
-                                <a href="bills.php" class="btn btn-default float-right">Cancel</a>
+                                <a href="projects.php" class="btn btn-default ml-2">Cancel</a>
+                                      
                             </form>
                         </div>
                     </div>
@@ -206,31 +329,143 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../dist/js/adminlte.min.js"></script>
+<!-- AJAX for dynamic Project Type -->
 <script>
-document.getElementById('payment_status').addEventListener('change', function () {
-    const status = this.value;
+    // Get references to the dropdowns
+    const districtSelect = document.getElementById('district_id');
+    const talukaSelect = document.getElementById('taluka_id');
+    const villageSelect = document.getElementById('village_id');
 
-    const unpaidDiv = document.getElementById('unpaid_reason_div');
-    const partialDiv = document.getElementById('partial_amount_div');
-
-    const unpaidInput = document.getElementById('unpaid_reason');
-    const partialInput = document.getElementById('partial_amount');
-
-    if (status === 'Unpaid') {
-        unpaidDiv.style.display = 'block';
-        partialDiv.style.display = 'none';
-        partialInput.value = ''; // clear partial amount
-    } else if (status === 'Partial') {
-        unpaidDiv.style.display = 'none';
-        partialDiv.style.display = 'block';
-        unpaidInput.value = ''; // clear unpaid reason
-    } else {
-        unpaidDiv.style.display = 'none';
-        partialDiv.style.display = 'none';
-        unpaidInput.value = '';
-        partialInput.value = '';
+    // Function to fetch data from the server
+    async function fetchData(url, bodyData) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: bodyData
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return []; // Return empty array on error
+        }
     }
-});
+
+    // Function to populate a dropdown
+    function populateDropdown(selectElement, data, placeholderText) {
+        // Clear existing options
+        selectElement.innerHTML = `<option value="">${placeholderText}</option>`;
+        // Add new options from the fetched data
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            selectElement.appendChild(option);
+        });
+    }
+
+    // Event listener for the District dropdown
+    districtSelect.addEventListener('change', async () => {
+        const districtId = districtSelect.value;
+        // Clear taluka and village dropdowns
+        populateDropdown(talukaSelect, [], 'Choose Taluka');
+        populateDropdown(villageSelect, [], 'Choose Village');
+
+        if (districtId) {
+            const talukas = await fetchData('fetch_data.php', `type=talukas&id=${districtId}`);
+            populateDropdown(talukaSelect, talukas, 'Choose Taluka');
+        }
+    });
+
+    // Event listener for the Taluka dropdown
+    talukaSelect.addEventListener('change', async () => {
+        const talukaId = talukaSelect.value;
+        // Clear village dropdown
+        populateDropdown(villageSelect, [], 'Choose Village');
+
+        if (talukaId) {
+            const villages = await fetchData('fetch_data.php', `type=villages&id=${talukaId}`);
+            populateDropdown(villageSelect, villages, 'Choose Village');
+        }
+    });
+
+    // Get references to the input fields
+    const constructionCostInput = document.getElementById('construction_cost');
+    const cessAmountInput = document.getElementById('cess_amount');
+
+    /**
+     * Calculates the cess amount (1% of the construction cost)
+     * and updates the cess amount input field.
+     */
+    function calculateCess() {
+        // Get the value from the construction cost input
+        const cost = parseFloat(constructionCostInput.value);
+
+        // Check if the input is a valid number
+        if (!isNaN(cost) && cost >= 0) {
+            // Calculate 1% of the cost
+            const cessAmount = cost * 0.01;
+
+            // Update the cess amount input field with the calculated value.
+            // We use toFixed(2) to format it to two decimal places for currency.
+            cessAmountInput.value = cessAmount.toFixed(2);
+        } else {
+            // If the input is not a valid number, clear the cess amount field
+            cessAmountInput.value = '';
+        }
+    }
+
+    // Add an event listener to the construction cost input field.
+    // The 'input' event fires whenever the value of the element changes.
+    constructionCostInput.addEventListener('input', calculateCess);
+
+    $('#category_id').on('change', function () {
+    const categoryId = $(this).val();
+    if (categoryId) {
+        $.get('get-types.php?category_id=' + categoryId, function (data) {
+        $('#type_id').html(data);
+        });
+    } else {
+        $('#type_id').html('<option value="">-- Select Type --</option>');
+    }
+    });
+
+    document.getElementById('addMoreBtn').addEventListener('click', function () {
+        const container = document.getElementById('workOrderContainer');
+        const sections = container.getElementsByClassName('work-order-section');
+        const lastSection = sections[sections.length - 1];
+        const newSection = lastSection.cloneNode(true);
+
+        // Reset values inside cloned section
+        newSection.querySelectorAll('input, select').forEach(el => {
+            if (el.type === 'file') {
+            el.value = null;
+            } else {
+            el.value = '';
+            }
+        });
+
+        container.appendChild(newSection);
+    });
+
+    // Delegate remove button functionality
+    document.getElementById('workOrderContainer').addEventListener('click', function (e) {
+        if (e.target.classList.contains('remove-section')) {
+            const sections = this.getElementsByClassName('work-order-section');
+            if (sections.length > 1) {
+            e.target.closest('.work-order-section').remove();
+            } else {
+            alert('At least one Work Order section is required.');
+            }
+        }
+    });
 </script>
+
 </body>
 </html>
