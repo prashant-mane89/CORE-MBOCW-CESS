@@ -239,7 +239,7 @@ if (isset($_SESSION['success']) && !empty($_SESSION['success'])){
             <div class="alert alert-success"><?php echo $_SESSION['success']; ?></div>
             <?php unset($_SESSION['success']); ?>
         <?php endif; ?>
-		<form action="http://localhost/CORE-MBOCW-CESS/save-register-form.php" method="POST" id="cafoRegistrationForm" class="row g-4">
+		<form action="save-register-form.php" method="POST" id="cafoRegistrationForm" class="row g-4">
 			<!-- Local Authority Details -->
 			<h5 class="text-primary">Local Authority Details</h5>
 			<div class="col-md-6">
