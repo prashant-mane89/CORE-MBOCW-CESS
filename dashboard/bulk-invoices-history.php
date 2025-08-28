@@ -140,7 +140,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 echo "<tr id='row-{$row['id']}'>";
                                 echo "<td>{$sr}</td>";
                                 echo "<td>₹" . htmlspecialchars(number_format($row['effective_cess_amount'], 2)) . "</td>";
-                                echo "<td>" . htmlspecialchars($row['bulk_project_invoices_template_file']) . "</td>";
+                                echo "<td>" . htmlspecialchars($row['bulk_project_invoices_template_file']) . " <a href='../uploads/bulk_upload_templates/". htmlspecialchars($row['bulk_project_invoices_template_file']) ."' download><i class='fas fa-download'></i></a></td>";
                                 echo "<td>" . htmlspecialchars(getPaymentModeName($row['cess_payment_mode'])) . "</td>";
                                 echo "<td>" . htmlspecialchars(date("Y-m-d", strtotime($row['created_at']))) . "</td>";
                                 

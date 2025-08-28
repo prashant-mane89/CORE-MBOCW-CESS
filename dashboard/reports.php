@@ -380,31 +380,33 @@ try {
         paginatedCards.forEach(card => {
             const cardHtml = `
                 <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-1">
-                    <h5 class="font-semibold text-gray-800 mb-4">${card.name}</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p class="text-sm font-medium text-gray-600 mb-1">
-                                Project Status (<span class="font-bold text-blue-600">${card.status_percent}%</span>)
-                            </p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${card.status_percent}%"></div>
+                    <a href='view-project.php?id=${card.id}' title='Clcik to view details'>
+                        <h5 class="font-semibold text-gray-800 mb-4">${card.name}</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="text-sm font-medium text-gray-600 mb-1">
+                                    Project Status (<span class="font-bold text-blue-600">${card.status_percent}%</span>)
+                                </p>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${card.status_percent}%"></div>
+                                </div>
+                                
                             </div>
-                            
-                        </div>
-                        <div class="col-md-6">
-                            <p class="text-sm font-medium text-gray-600 mb-1">
-                                CESS Collection (<span class="font-bold text-green-600">${card.cess_percent}%</span>)
-                            </p>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-green-600 h-2.5 rounded-full" style="width: ${card.cess_percent}%"></div>
+                            <div class="col-md-6">
+                                <p class="text-sm font-medium text-gray-600 mb-1">
+                                    CESS Collection (<span class="font-bold text-green-600">${card.cess_percent}%</span>)
+                                </p>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-green-600 h-2.5 rounded-full" style="width: ${card.cess_percent}%"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <ul class="text-sm text-gray-700 mt-4 space-y-2">
-                        <li><strong>Total CESS Due:</strong> ₹${card.total_cess_due}</li>
-                        <li><strong>Total Collected:</strong> ₹${card.total_collected}</li>
-                        <li><strong>Pending CESS:</strong> ₹${card.total_pending}</li>
-                    </ul>
+                        <ul class="text-sm text-gray-700 mt-4 space-y-2">
+                            <li><strong>Total CESS Due:</strong> ₹${card.total_cess_due}</li>
+                            <li><strong>Total Collected:</strong> ₹${card.total_collected}</li>
+                            <li><strong>Pending CESS:</strong> ₹${card.total_pending}</li>
+                        </ul>
+                    </a>
                 </div>
             `;
             cardsContainer.insertAdjacentHTML('beforeend', cardHtml);

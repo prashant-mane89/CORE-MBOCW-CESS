@@ -326,6 +326,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['bulk_projects_invoice
                     // This correctly inserts into the single `cess_payment_history` table as discussed previously.
                     $cessPaymentHistoryInsertStmt->bind_param("iiidddddiissis", $bulkInvoiceId, $projectId, $workOrderId, $invoiceAmount, $cessAmount, $gstCessAmount, $administrativeCost, $effectiveCessAmount, $employerId, $cessPaymentMode, $cessReceiptFile, $paymentStatus, $isPaymentVerified, $invoiceUploadType);
                     $cessPaymentHistoryInsertStmt->execute();
+
+                    // Add the effective cess amount to our running total ---
+                    $totalValidatedCessAmount += $effectiveCessAmount;
                 }
                 
                 // --- 7. Check and update work order status ---
@@ -369,8 +372,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['bulk_projects_invoice
 
         // Final check on total processed rows
         if ($successfulInserts > 0) {
+            // Update the history record with the correct total amount ---
+            $bulkProjectsInvoicesHistoryUpdateStmt = $conn->prepare("UPDATE bulk_projects_invoices_history SET effective_cess_amount = ? WHERE id = ?");
+            $bulkProjectsInvoicesHistoryUpdateStmt->bind_param("di", $totalValidatedCessAmount, $bulkInvoiceId);
+            $bulkProjectsInvoicesHistoryUpdateStmt->execute();
+            $bulkProjectsInvoicesHistoryUpdateStmt->close();
+
             // If data was successfully processed, proceed with Razorpay order creation
-            $amountInPaisa = round($templateTotalEffectiveCessAmount * 100);
+            $amountInPaisa = round($totalValidatedCessAmount * 100);
             
             $orderData = [
                 'amount' => $amountInPaisa,
@@ -387,7 +396,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['bulk_projects_invoice
             // Log the order creation in the new table
             $orderId = $razorpayOrder['id'];
             $requestData = json_encode($orderData);
-            $razorpayTransactionInsertStmt->bind_param("siidss", $orderId, $_SESSION['user_id'], $bulkInvoiceId, $templateTotalEffectiveCessAmount, $razorpayOrder['status'], $requestData);
+            $razorpayTransactionInsertStmt->bind_param("siidss", $orderId, $_SESSION['user_id'], $bulkInvoiceId, $totalValidatedCessAmount, $razorpayOrder['status'], $requestData);
             $razorpayTransactionInsertStmt->execute();
 
             // Commit the database transaction
