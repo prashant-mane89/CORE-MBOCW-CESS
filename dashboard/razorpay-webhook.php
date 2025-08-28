@@ -54,8 +54,8 @@ try {
     try {
         // Prepare statements for updating tables
         $updateRazorpayStmt = $conn->prepare("UPDATE razorpay_transactions SET payment_id = ?, signature = ?, status = 'paid', response_data = ? WHERE order_id = ?");
-        $updateBulkHistoryStmt = $conn->prepare("UPDATE bulk_projects_invoices_history SET is_payment_verified = 1 WHERE id = ?"); // 1 for Verified
-        $updateCessHistoryStmt = $conn->prepare("UPDATE cess_payment_history SET payment_status = 'Paid', is_payment_verified = 1 WHERE bulk_invoice_id = ? AND payment_status = 'Pending'");
+        $updateBulkHistoryStmt = $conn->prepare("UPDATE bulk_projects_invoices_history SET is_payment_verified = 2 WHERE id = ?"); // 1 for Verified, 2 for pending intill admin verifies
+        $updateCessHistoryStmt = $conn->prepare("UPDATE cess_payment_history SET payment_status = 'Paid', is_payment_verified = 2 WHERE bulk_invoice_id = ? AND payment_status = 'Pending'"); 
 
         // Get the bulk invoice ID from the razorpay_transactions table
         $getBulkInvoiceIdStmt = $conn->prepare("SELECT bulk_invoice_id FROM razorpay_transactions WHERE order_id = ?");

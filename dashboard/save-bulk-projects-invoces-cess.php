@@ -398,7 +398,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['bulk_projects_invoice
                 'amount' => $amountInPaisa,
                 'description' => 'Cess Payment for Bulk Invoice Upload',
                 'name' => 'MBOCW-CESS Portal',
-                'image' => 'https://www.your-website.com/path/to/your/logo.png', // Replace with your logo URL
+                'image' => '../dist/img/MBOCWLogo.png', // Replace with your logo URL
                 'currency' => 'INR',
                 'notes' => $razorpayOrder['notes'],
             ];
