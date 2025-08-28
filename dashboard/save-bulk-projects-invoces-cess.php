@@ -1,6 +1,7 @@
 <?php
 // C:\wamp64\www\CORE-MBOCW-CESS\dashboard\save-bulk-projects-invoces-cess.php
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 // Ensure the user is logged in

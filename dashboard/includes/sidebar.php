@@ -3,7 +3,7 @@
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="dashboard.php" class="brand-link">
+    <a href="dashboard.php" class="brand-link navbar-primary">
       <img src="../dist/img/MBOCWLogo.png" alt="MBOCW Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light">MBOCW</span>
     </a>
@@ -24,12 +24,12 @@
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
-          <li class="nav-item"><a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>"><i class="nav-icon fas fa-tachometer-alt"></i><p>Dashboard</p></a></li>
-          <li class="nav-item"><a href="local-authorities.php" class="nav-link <?php echo ($current_page == 'local-authorities.php') ? 'active' : ''; ?>"><i class="far fa-building nav-icon"></i><p>Manage Local Authority</p></a></li>
-          <li class="nav-item"><a href="projects.php" class="nav-link <?php echo ($current_page == 'projects.php') ? 'active' : ''; ?>"><i class="far fa-building nav-icon"></i><p>Manage Projects</p></a></li>
-          <li class="nav-item"><a href="bulk-invoices-history.php" class="nav-link <?php echo ($current_page == 'bulk-invoices-history.php') ? 'active' : ''; ?>"><i class="nav-icon fas fa-money-bill-wave"></i><p>Bulk Invoice Upload History</p></a></li>
-          <li class="nav-item"><a href="reports.php" class="nav-link <?php echo ($current_page == 'reports.php') ? 'active' : ''; ?>"><i class="nav-icon fas fa-chart-line"></i><p>Reports</p></a></li>
-          <li class="nav-item"><a href="logout.php" class="nav-link"><i class="nav-icon fas fa-sign-out-alt"></i><p>Logout</p></a></li>
+          <li class="nav-item"><a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>" title="Dashboard"><i class="nav-icon fas fa-tachometer-alt"></i><p>Dashboard</p></a></li>
+          <li class="nav-item"><a href="local-authorities.php" class="nav-link <?php echo ($current_page == 'local-authorities.php') ? 'active' : ''; ?>" title="Manage Local Authority"><i class="far fa-building nav-icon"></i><p>Manage Local Authority</p></a></li>
+          <li class="nav-item"><a href="projects.php" class="nav-link <?php echo ($current_page == 'projects.php') ? 'active' : ''; ?>" title="Manage Projects"><i class="far fa-building nav-icon"></i><p>Manage Projects</p></a></li>
+          <li class="nav-item"><a href="bulk-invoices-history.php" class="nav-link <?php echo ($current_page == 'bulk-invoices-history.php') ? 'active' : ''; ?>" title="Bulk Invoice Upload History"><i class="nav-icon fas fa-money-bill-wave"></i><p>Bulk Invoice Upload History</p></a></li>
+          <li class="nav-item"><a href="reports.php" class="nav-link <?php echo ($current_page == 'reports.php') ? 'active' : ''; ?>" title="Reports"><i class="nav-icon fas fa-chart-line"></i><p>Reports</p></a></li>
+          <li class="nav-item"><a href="logout.php" class="nav-link" title="Logout"><i class="nav-icon fas fa-sign-out-alt"></i><p>Logout</p></a></li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
