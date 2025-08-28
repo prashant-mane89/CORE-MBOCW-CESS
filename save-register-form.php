@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $password = md5("123456"); 
         $role = 3; // CAFO role 
-        $is_active = 1;
+        $is_active = 2; // Set to 2 (Inactive) by default
         $local_authority_id = 0; 
 
         $stmt->bind_param("sssssiiiisisssi", $cafo_name, $cafo_email, $password, $cafo_mobile, $cafo_gender, $state_id, $district_id, $taluka_id, $village_id, $cafo_address, $role, $gstn, $pan, $aadhaar, $is_active);
@@ -97,8 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($stmt->num_rows > 0) {
                 throw new Exception("Duplicate Local Authority (local_authority_type / local_authority_name / district_id).");
             }else{
-                $stmt = $conn->prepare("INSERT INTO local_authorities (type_id, name, state_id, district_id, taluka_id, village_id, address) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("isiiiis", $local_authority_type, $local_authority_name, $state_id, $district_id, $taluka_id, $village_id, $cafo_address);
+                $stmt = $conn->prepare("INSERT INTO local_authorities (type_id, name, state_id, district_id, taluka_id, village_id, address, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("isiiiis", $local_authority_type, $local_authority_name, $state_id, $district_id, $taluka_id, $village_id, $cafo_address, $is_active);
 
                 if ($stmt->execute()) {
                     $local_authority_id = $stmt->insert_id;

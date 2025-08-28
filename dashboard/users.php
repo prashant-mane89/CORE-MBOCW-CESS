@@ -18,7 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>MBOCWCESS Portal | Local Authorities</title>
+  <title>MBOCWCESS Portal | Users</title>
   <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
   <!-- Font Awesome Icons -->
@@ -108,12 +108,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Local Authorities</h1>
+            <h1 class="m-0 text-dark">Users</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Local Authorities</li>
+              <li class="breadcrumb-item active">Users</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -126,9 +126,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="container-fluid">
             <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Local Authorities</h3>
+                <h3 class="card-title">Users</h3>
                 <div class="card-tools">
-                    <a href="add-local-authority.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add Local Authority</a> 
+                    <a href="add-local-authority.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add User</a> 
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fas fa-minus"></i></button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove"><i class="fas fa-times"></i></button>
                 </div>
@@ -150,20 +150,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Type</th>
-                            <th>Address</th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
                         $sql = "
-                        SELECT la.*, lat.name AS type_name
-                        FROM local_authorities la
-                        LEFT JOIN local_authority_types lat ON la.type_id = lat.id
-                        ORDER BY la.id DESC
+                            SELECT 
+                                u.id, u.name, u.email, u.phone, u.is_active, u.role,
+                                r.name AS role_name
+                            FROM users u
+                            LEFT JOIN roles r ON r.id = u.role
+                            ORDER BY u.id DESC
                         ";
                         $result = mysqli_query($conn, $sql);
                         $sr = 1;
@@ -174,21 +175,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                                 echo "<tr>";
                                 echo "<td>".$sr++."</td>";
-                                echo "<td>".htmlspecialchars($row['name'] ?? '')."</td>";
-                                echo "<td>".htmlspecialchars($row['type_name'] ?? '')."</td>";
-                                echo "<td>".htmlspecialchars($row['address'] ?? '')."</td>";
-                                echo "<td>".htmlspecialchars($row['contact_email'] ?? '')."</td>";
-                                echo "<td>".htmlspecialchars($row['contact_phone'] ?? '')."</td>";
+                                echo "<td>".htmlspecialchars($row['name'])."</td>";
+                                echo "<td>".htmlspecialchars($row['email'])."</td>";
+                                echo "<td>".htmlspecialchars($row['phone'])."</td>";
+                                echo "<td>".htmlspecialchars($row['role_name'])."</td>";
                                 echo "<td>
                                         <label class='switch' title='$statusText'><input type='checkbox' data-id='{$row['id']}' id='activeToggle' onclick='return confirm(\"Are you sure you want to perform this action?\");' {$isActive}><span class='slider round'></span></label>
-                                        <a href='edit-local-authority.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
-                                        <a href='view-local-authority.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
+                                        <a href='edit-user.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
+                                        <a href='view-user.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
                                     </td>";
                                 echo "</tr>";
                                 $sr++;
                             }
                         } else {
-                            echo "<tr><td colspan='7' class='text-center'>No Authorities found</td></tr>";
+                            echo "<tr><td colspan='6' class='text-center'>No Users found</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -238,7 +238,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         let status = $(this).is(':checked') ? 1 : 2; // 1 for Active, 2 for Inactive
 
         $.ajax({
-            url: "toggle-local-authority.php",
+            url: "toggle-user.php",
             type: "POST",
             data: { id: id, status: status },
             dataType: "json",
