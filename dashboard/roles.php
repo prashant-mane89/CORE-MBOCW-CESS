@@ -18,7 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>MBOCWCESS Portal | Users</title>
+  <title>MBOCWCESS Portal | Roles</title>
   <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
   <!-- Font Awesome Icons -->
@@ -108,12 +108,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Users</h1>
+            <h1 class="m-0 text-dark">Roles</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Users</li>
+              <li class="breadcrumb-item active">Roles</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -126,9 +126,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="container-fluid">
             <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Users</h3>
+                <h3 class="card-title">Roles</h3>
                 <div class="card-tools">
-                    <a href="add-user.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add User</a> 
+                    <a href="add-role.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add Role</a> 
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fas fa-minus"></i></button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove"><i class="fas fa-times"></i></button>
                 </div>
@@ -150,22 +150,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
+                            <th>Description</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "
-                            SELECT 
-                                u.id, u.name, u.email, u.phone, u.is_active, u.role,
-                                r.name AS role_name
-                            FROM users u
-                            LEFT JOIN roles r ON r.id = u.role
-                            ORDER BY u.id DESC
-                        ";
+                        $sql = "SELECT * FROM roles ORDER BY id ASC";
                         $result = mysqli_query($conn, $sql);
                         $sr = 1;
                         if (mysqli_num_rows($result) > 0) {
@@ -176,19 +167,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 echo "<tr>";
                                 echo "<td>".$sr++."</td>";
                                 echo "<td>".htmlspecialchars($row['name'])."</td>";
-                                echo "<td>".htmlspecialchars($row['email'])."</td>";
-                                echo "<td>".htmlspecialchars($row['phone'])."</td>";
-                                echo "<td>".htmlspecialchars($row['role_name'])."</td>";
+                                echo "<td>".htmlspecialchars($row['description'])."</td>";
                                 echo "<td>
                                         <label class='switch' title='$statusText'><input type='checkbox' data-id='{$row['id']}' id='activeToggle' onclick='return confirm(\"Are you sure you want to perform this action?\");' {$isActive}><span class='slider round'></span></label>
-                                        <a href='edit-user.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
-                                        <a href='view-user.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
+                                        <a href='edit-role.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
+                                        <a href='view-role.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
                                     </td>";
                                 echo "</tr>";
                                 $sr++;
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='text-center'>No Users found</td></tr>";
+                            echo "<tr><td colspan='6' class='text-center'>No Roles found</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -238,7 +227,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         let status = $(this).is(':checked') ? 1 : 2; // 1 for Active, 2 for Inactive
 
         $.ajax({
-            url: "toggle-user.php",
+            url: "toggle-role.php",
             type: "POST",
             data: { id: id, status: status },
             dataType: "json",
