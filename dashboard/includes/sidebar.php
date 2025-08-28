@@ -29,6 +29,7 @@
           <li class="nav-item"><a href="projects.php" class="nav-link <?php echo ($current_page == 'projects.php') ? 'active' : ''; ?>" title="Manage Projects"><i class="far fa-building nav-icon"></i><p>Manage Projects</p></a></li>
           <li class="nav-item"><a href="users.php" class="nav-link <?php echo ($current_page == 'users.php') ? 'active' : ''; ?>" title="Manage Users"><i class="far fa-user nav-icon"></i><p>Manage Users</p></a></li>
           <li class="nav-item"><a href="roles.php" class="nav-link <?php echo ($current_page == 'roles.php') ? 'active' : ''; ?>" title="Manage Roles"><i class="far fa-user nav-icon"></i><p>Manage Roles</p></a></li>
+          <li class="nav-item"><a href="employers.php" class="nav-link <?php echo ($current_page == 'employers.php') ? 'active' : ''; ?>" title="Manage Employers"><i class="far fa-user nav-icon"></i><p>Manage Employer</p></a></li>
           <li class="nav-item"><a href="bulk-invoices-history.php" class="nav-link <?php echo ($current_page == 'bulk-invoices-history.php') ? 'active' : ''; ?>" title="Bulk Invoice Upload History"><i class="nav-icon fas fa-money-bill-wave"></i><p>Bulk Invoice Upload History</p></a></li>
           <li class="nav-item"><a href="reports.php" class="nav-link <?php echo ($current_page == 'reports.php') ? 'active' : ''; ?>" title="Reports"><i class="nav-icon fas fa-chart-line"></i><p>Reports</p></a></li>
           <li class="nav-item"><a href="logout.php" class="nav-link" title="Logout"><i class="nav-icon fas fa-sign-out-alt"></i><p>Logout</p></a></li>
