@@ -18,7 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>MBOCWCESS Portal | Users</title>
+  <title>MBOCWCESS Portal | Talukas</title>
   <link rel="icon" href="../assets/img/favicon_io/favicon.ico" type="image/x-icon">
 
   <!-- Font Awesome Icons -->
@@ -67,11 +67,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
         }
 
         input:checked + .slider {
-            background-color: #0a8d2bff;
+            background-color: #2196F3;
         }
 
         input:focus + .slider {
-            box-shadow: 0 0 1px #0a8d2bff;
+            box-shadow: 0 0 1px #2196F3;
         }
 
         input:checked + .slider:before {
@@ -108,12 +108,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Users</h1>
+            <h1 class="m-0 text-dark">Talukas</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Users</li>
+              <li class="breadcrumb-item active">Talukas</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -126,9 +126,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="container-fluid">
             <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Users</h3>
+                <h3 class="card-title">Talukas</h3>
                 <div class="card-tools">
-                    <a href="add-user.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add User</a> 
+                    <a href="add-taluka.php" class="btn btn-primary" ><i class="fas fa-plus"></i> Add Taluka</a> 
                     <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse"><i class="fas fa-minus"></i></button>
                     <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove"><i class="fas fa-times"></i></button>
                 </div>
@@ -150,45 +150,34 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Role</th>
+                            <th>District</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "
-                            SELECT 
-                                u.id, u.name, u.email, u.phone, u.is_active, u.role,
-                                r.name AS role_name
-                            FROM users u
-                            LEFT JOIN roles r ON r.id = u.role
-                            ORDER BY u.id DESC
-                        ";
+                        $sql = "SELECT t.id, t.name, t.district_id, t.active_status, d.name as district_name FROM talukas t JOIN districts d ON t.district_id = d.id ORDER BY t.name ASC";
                         $result = mysqli_query($conn, $sql);
                         $sr = 1;
                         if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
-                                $isActive = ($row['is_active'] == 1) ? 'checked' : '';
-                                $statusText = ($row['is_active'] == 1) ? 'Active' : 'Inactive';
+                                $isActive = ($row['active_status'] == 1) ? 'checked' : '';
+                                $statusText = ($row['active_status'] == 1) ? 'Active' : 'Inactive';
 
                                 echo "<tr>";
                                 echo "<td>".$sr++."</td>";
                                 echo "<td>".htmlspecialchars($row['name'])."</td>";
-                                echo "<td>".htmlspecialchars($row['email'])."</td>";
-                                echo "<td>".htmlspecialchars($row['phone'])."</td>";
-                                echo "<td>".htmlspecialchars($row['role_name'])."</td>";
+                                echo "<td>".htmlspecialchars($row['district_name'])."</td>";
                                 echo "<td>
                                         <label class='switch' title='$statusText'><input type='checkbox' data-id='{$row['id']}' id='activeToggle' onclick='return confirm(\"Are you sure you want to perform this action?\");' {$isActive}><span class='slider round'></span></label>
-                                        <a href='edit-user.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
-                                        <a href='view-user.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
+                                        <a href='edit-taluka.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
+                                        <a href='view-taluka.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
                                     </td>";
                                 echo "</tr>";
                                 $sr++;
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='text-center'>No Users found</td></tr>";
+                            echo "<tr><td colspan='4' class='text-center'>No Taluka found</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -238,7 +227,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         let status = $(this).is(':checked') ? 1 : 2; // 1 for Active, 2 for Inactive
 
         $.ajax({
-            url: "toggle-user.php",
+            url: "toggle-taluka.php",
             type: "POST",
             data: { id: id, status: status },
             dataType: "json",
