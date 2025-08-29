@@ -25,6 +25,8 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
           <li class="nav-item"><a href="dashboard.php" class="nav-link <?php echo ($current_page == 'dashboard.php') ? 'active' : ''; ?>" title="Dashboard"><i class="nav-icon fas fa-tachometer-alt"></i><p>Dashboard</p></a></li>
+          <li class="nav-item"><a href="project-categories.php" class="nav-link <?php echo ($current_page == 'project-categories.php') ? 'active' : ''; ?>" title="Manage Project Categories"><i class="far fa-building nav-icon"></i><p>Manage Project Categories</p></a></li>
+          <li class="nav-item"><a href="project-types.php" class="nav-link <?php echo ($current_page == 'project-types.php') ? 'active' : ''; ?>" title="Manage Project Type"><i class="far fa-building nav-icon"></i><p>Manage Project Type</p></a></li>
           <li class="nav-item"><a href="local-authorities.php" class="nav-link <?php echo ($current_page == 'local-authorities.php') ? 'active' : ''; ?>" title="Manage Local Authority"><i class="far fa-building nav-icon"></i><p>Manage Local Authority</p></a></li>
           <li class="nav-item"><a href="projects.php" class="nav-link <?php echo ($current_page == 'projects.php') ? 'active' : ''; ?>" title="Manage Projects"><i class="far fa-building nav-icon"></i><p>Manage Projects</p></a></li>
           <li class="nav-item"><a href="users.php" class="nav-link <?php echo ($current_page == 'users.php') ? 'active' : ''; ?>" title="Manage Users"><i class="far fa-user nav-icon"></i><p>Manage Users</p></a></li>
