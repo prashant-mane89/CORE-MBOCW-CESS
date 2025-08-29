@@ -366,7 +366,9 @@ if (isset($_SESSION['success']) && !empty($_SESSION['success'])){
 </footer>
 <!-- Back to Top Button -->
 <button onclick="scrollToTop()" id="backToTopBtn" title="Go to top">↑</button>
-
+<!-- use a version range instead of a specific version -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
 <script type="text/javascript">
     // Show button on scroll
     window.onscroll = function() {
@@ -386,69 +388,103 @@ if (isset($_SESSION['success']) && !empty($_SESSION['success'])){
         });
     }
 </script>
-
 <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    <script src="http://43.204.0.18/assets/vendor/jquery/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>    
 <script type="text/javascript">
-	var emailVerification = false;
-	var moblieVerification = false;
-	$('.numeric').on('input', function(event) {
-		this.value = this.value.replace(/[^0-9]/g, '');
-	});
-	
-	$('.districtChange').on('change', function() {
-		var district_id = this.value;
-		if (!district_id) return;
-		fetch("http://localhost/CORE-MBOCW-CESS/get-taluka.php?district_id=" + district_id, {
-            headers: {
-                'Accept': 'application/json'
+    $(document).ready(function() {
+        // Aadhaar validation
+        $('#aadhaar').on('input', function() {
+            const aadhaar = $(this).val();
+            const aadhaarPattern = /^\d{12}$/;
+            if (!aadhaarPattern.test(aadhaar)) {
+                $('#aadhaarError').text('Aadhaar must be a 12-digit number.').css('color', 'red');
+            } else {
+                $('#aadhaarError').text('');
             }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            return res.json();
-        })
-        .then(data => {
-            $('.talukaChange').empty();
-            var talukahmtl = '<option value="">Select taluka</option>';
-            data.forEach(sub => {
-                talukahmtl += `<option value="${sub.id}">${sub.name}</option>`;
-            });
-            $('.talukaChange').append(talukahmtl);
-        })
-        .catch(err => {
-            console.error('Fetch error:', err);
-            alert('Could not load talukas. See console for details.');
         });
-	});
 
-	$('.talukaChange').on('change', function() {
-		var taluka_id = this.value;
-		if (!taluka_id) return;
-		fetch("http://localhost/CORE-MBOCW-CESS/get-village.php?taluka_id=" + taluka_id, {
-            headers: {
-                'Accept': 'application/json'
+        // PAN validation
+        $('#pancard').on('input', function() {
+            const pan = $(this).val().toUpperCase();
+            const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+            if (!panPattern.test(pan)) {
+                $('#panError').text('PAN must be in format: AAAAA9999A.').css('color', 'red');
+            } else {
+                $('#panError').text('');
             }
-        })
-        .then(res => {
-            if (!res.ok) throw new Error("Network response was not ok");
-            return res.json();
-        })
-        .then(data => {
-            $('.villageChange').empty();
-            var villagehmtl = '<option value="">Select village</option>';
-            data.forEach(sub => {
-                villagehmtl += `<option value="${sub.id}">${sub.name}</option>`;
-            });
-            $('.villageChange').append(villagehmtl);
-        })
-        .catch(err => {
-            console.error('Fetch error:', err);
-            alert('Could not load villages. See console for details.');
         });
-	});
+
+        // GSTN validation
+        $('#gstn').on('input', function() {
+            const gstn = $(this).val().toUpperCase();
+            const gstnPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+            if (gstn && !gstnPattern.test(gstn)) {
+                $('#gstnError').text('GSTN must be a valid 15-character code.').css('color', 'red');
+            } else {
+                $('#gstnError').text('');
+            }
+        });
+
+        // Allow only numeric input for specific fields
+        $('.numeric').on('input', function(event) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        $('.districtChange').on('change', function() {
+            var district_id = this.value;
+            if (!district_id) return;
+            fetch("get-taluka.php?district_id=" + district_id, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Network response was not ok");
+                return res.json();
+            })
+            .then(data => {
+                $('.talukaChange').empty();
+                var talukahmtl = '<option value="">Select taluka</option>';
+                data.forEach(sub => {
+                    talukahmtl += `<option value="${sub.id}">${sub.name}</option>`;
+                });
+                $('.talukaChange').append(talukahmtl);
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                alert('Could not load talukas. See console for details.');
+            });
+        });
+
+        $('.talukaChange').on('change', function() {
+            var taluka_id = this.value;
+            if (!taluka_id) return;
+            fetch("http://localhost/CORE-MBOCW-CESS/get-village.php?taluka_id=" + taluka_id, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(res => {
+                if (!res.ok) throw new Error("Network response was not ok");
+                return res.json();
+            })
+            .then(data => {
+                $('.villageChange').empty();
+                var villagehmtl = '<option value="">Select village</option>';
+                data.forEach(sub => {
+                    villagehmtl += `<option value="${sub.id}">${sub.name}</option>`;
+                });
+                $('.villageChange').append(villagehmtl);
+            })
+            .catch(err => {
+                console.error('Fetch error:', err);
+                alert('Could not load villages. See console for details.');
+            });
+        });
+
+    });
+	
 
 </script>
 </body>
-
 </html>

@@ -182,8 +182,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 echo "<td>".htmlspecialchars($row['category_name'])."</td>";
                                 echo "<td>
                                         <label class='switch' title='$statusText'><input type='checkbox' data-id='{$row['id']}' id='activeToggle' onclick='return confirm(\"Are you sure you want to perform this action?\");' {$isActive}><span class='slider round'></span></label>
-                                        <a href='edit-project-category.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
-                                        <a href='view-project-category.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
+                                        <a href='edit-project-type.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
+                                        <a href='view-project-type.php?id=".$row['id']."' class='btn btn-sm btn-info' ><i class='fas fa-eye'></i></a>
                                     </td>";
                                 echo "</tr>";
                                 $sr++;

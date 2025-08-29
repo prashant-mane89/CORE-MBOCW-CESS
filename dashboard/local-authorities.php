@@ -152,6 +152,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             <th>Name</th>
                             <th>Type</th>
                             <th>Address</th>
+                            <th>CAFO Name</th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Action</th>
@@ -160,9 +161,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <tbody>
                         <?php
                         $sql = "
-                        SELECT la.*, lat.name AS type_name
+                        SELECT la.*, lat.name AS type_name, u.name AS user_name, u.email AS contact_email, u.phone AS contact_phone
                         FROM local_authorities la
                         LEFT JOIN local_authority_types lat ON la.type_id = lat.id
+                        LEFT JOIN local_authorities_users lau ON la.id = lau.local_authority_id
+                        LEFT JOIN users u ON lau.user_id = u.id
                         ORDER BY la.id DESC
                         ";
                         $result = mysqli_query($conn, $sql);
@@ -177,6 +180,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 echo "<td>".htmlspecialchars($row['name'] ?? '')."</td>";
                                 echo "<td>".htmlspecialchars($row['type_name'] ?? '')."</td>";
                                 echo "<td>".htmlspecialchars($row['address'] ?? '')."</td>";
+                                echo "<td>".htmlspecialchars($row['user_name'] ?? '')."</td>";
                                 echo "<td>".htmlspecialchars($row['contact_email'] ?? '')."</td>";
                                 echo "<td>".htmlspecialchars($row['contact_phone'] ?? '')."</td>";
                                 echo "<td>
@@ -188,7 +192,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 $sr++;
                             }
                         } else {
-                            echo "<tr><td colspan='7' class='text-center'>No Authorities found</td></tr>";
+                            echo "<tr><td colspan='8' class='text-center'>No Authorities found</td></tr>";
                         }
                         ?>
                     </tbody>

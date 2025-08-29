@@ -1,6 +1,10 @@
 <?php
 session_start();
 require_once 'config/db.php';
+require 'vendor/autoload.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 // Clear previous messages
 unset($_SESSION['error']);
@@ -16,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $local_authority_name = trim($_POST['local_authority_name']);
     $local_authority_type = intval($_POST['local_authority_type']);
     $cafo_name            = trim($_POST['cafo_name']);
-    $cafo_email           = trim($_POST['cafo_email']);
+    $cafo_email           = filter_var(trim($_POST['cafo_email'] ?? ''), FILTER_VALIDATE_EMAIL);
     $cafo_mobile          = trim($_POST['cafo_mobile']);
     $cafo_gender          = trim($_POST['cafo_gender']);
     $cafo_address         = trim($_POST['cafo_address']);
     $aadhaar              = trim($_POST['aadhaar_no']);
     $pan                  = strtoupper(trim($_POST['pan_no']));
     $gstn                 = trim($_POST['gstn']);
-    $state_id             = intval($_POST['state']);
-    $district_id          = intval($_POST['district']);
-    $taluka_id            = intval($_POST['taluka']);
-    $village_id           = intval($_POST['village']);
+    $state_id             = intval($_POST['state'] ?? 0);
+    $district_id          = intval($_POST['district'] ?? 0);
+    $taluka_id            = intval($_POST['taluka'] ?? 0);
+    $village_id           = intval($_POST['village'] ?? 0);
 
     // ===== Validation =====
     if (empty($local_authority_name) || empty($local_authority_type) || empty($cafo_name) ||
@@ -98,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception("Duplicate Local Authority (local_authority_type / local_authority_name / district_id).");
             }else{
                 $stmt = $conn->prepare("INSERT INTO local_authorities (type_id, name, state_id, district_id, taluka_id, village_id, address, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("isiiiis", $local_authority_type, $local_authority_name, $state_id, $district_id, $taluka_id, $village_id, $cafo_address, $is_active);
+                $stmt->bind_param("isiiiisi", $local_authority_type, $local_authority_name, $state_id, $district_id, $taluka_id, $village_id, $cafo_address, $is_active);
 
                 if ($stmt->execute()) {
                     $local_authority_id = $stmt->insert_id;
@@ -122,6 +126,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt2 = $conn->prepare($sql2);
                     $stmt2->bind_param("iii", $local_authority_id, $user_id, $is_active);
                     $stmt2->execute();
+                    $stmt2->close();
+
+                    // --- Start of email sending code ---
+                    $mail = new PHPMailer(true);
+                    try {
+                        // Server settings
+                        $mail->isSMTP();
+                        $mail->Host       = 'smtp.gmail.com'; // Replace with your SMTP server
+                        $mail->SMTPAuth   = true;
+                        $mail->Username   = 'aaravprashantmane@gmail.com'; // Replace with your email
+                        $mail->Password   = 'rpfbzhzfxomebmcq'; // Replace with your email password
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->Port       = 587;
+
+                        // Recipients
+                        $mail->setFrom('aaravprashantmane@gmail.com', 'MBOCW CESS Portal');
+                        $mail->addAddress($cafo_email, $cafo_name);
+
+                        // Content
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Welcome to MBOCW CESS Portal!';
+                        $mail->Body    = '
+                            <p>Hello ' . htmlspecialchars($cafo_name) . ',</p>
+                            <p>Welcome! Your account has been created successfully. Your login details are:</p>
+                            <p><strong>Username:</strong> ' . htmlspecialchars($cafo_email) . '</p>
+                            <p><strong>Password:</strong> 123456</p>
+                            <p>Please log in and change your password as soon as possible for security reasons.</p>
+                            <p>Thank you,</p>
+                            <p>The MBOCW CESS Team</p>
+                        ';
+                        $mail->AltBody = 'Hello ' . htmlspecialchars($cafo_name) . ",\n\nWelcome! Your account has been created successfully. Your login details are:\nUsername: " . htmlspecialchars($cafo_email) . "\nPassword: 123456\n\nPlease log in and change your password as soon as possible for security reasons.\n\nThank you,\nThe MBOCW CESS Team";
+
+                        $mail->send();
+                    } catch (Exception $e) {
+                        // Log the error but don't stop the registration process
+                        error_log("Email sending failed. Mailer Error: {$mail->ErrorInfo}");
+                    }
+                    // --- End of email sending code ---
 
                     $conn->commit();
                     $_SESSION['success'] = "Registration successful!";

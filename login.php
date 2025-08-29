@@ -120,11 +120,14 @@ $password = md5('superadmin'); // demo password generation
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Log in</button>
       </form>
+      <br>
+      <a href="index.php">Click here to Home Page</a>
     </div>
     <div class="image-section">
-        <img src="http://localhost/CORE-MBOCW-CESS/assets/img/mbocwcess-login.png" alt="POS Illustration" />
+        <img src="assets/img/mbocwcess-login.png" alt="Maharashtra Building and Other Construction Workers Welfare Board Logo" />
     </div>
   </div>
+  
   
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
