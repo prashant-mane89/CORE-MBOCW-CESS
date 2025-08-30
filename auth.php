@@ -35,6 +35,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["user_role"] = $role;
             $_SESSION["user_role_name"] = $roleName;
 
+            $stmt = $conn->prepare("SELECT p.name FROM role_permissions rp JOIN permissions p ON rp.permission_id = p.id WHERE rp.role_id = ?");
+            $stmt->bind_param('i', $role);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $permissions = [];
+            while ($row = $result->fetch_assoc()) {
+                $permissions[] = $row['name'];
+            }
+            $_SESSION['user_permissions'] = $permissions;
+            $stmt->close();
+
             header("Location: dashboard/dashboard.php");
             exit;
         } else {
