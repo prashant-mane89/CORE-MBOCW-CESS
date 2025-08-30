@@ -71,7 +71,7 @@ try {
         
         // Update razorpay_transactions table
         $responseData = json_encode($data);
-        $updateRazorpayStmt->bind_param("ssis", $razorpayPaymentId, $razorpaySignature, $responseData, $razorpayOrderId);
+        $updateRazorpayStmt->bind_param("ssss", $razorpayPaymentId, $razorpaySignature, $responseData, $razorpayOrderId);
         $updateRazorpayStmt->execute();
 
         // Update bulk_projects_invoices_history
