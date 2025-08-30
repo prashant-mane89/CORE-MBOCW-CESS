@@ -150,7 +150,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <tr>
                             <th>#</th>
                             <th>Name</th>
-                            <!-- <th></th> -->
+                            <th>Description</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -165,9 +165,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 $statusText = ($row['is_active'] == 1) ? 'Active' : 'Inactive';
 
                                 echo "<tr>";
-                                echo "<td>".$sr++."</td>";
+                                echo "<td>".$sr."</td>";
                                 echo "<td>".htmlspecialchars($row['name'])."</td>";
-                                // echo "<td>".htmlspecialchars($row['description'])."</td>";
+                                echo "<td>".htmlspecialchars($row['description'])."</td>";
                                 echo "<td>
                                         <label class='switch' title='$statusText'><input type='checkbox' data-id='{$row['id']}' id='activeToggle' onclick='return confirm(\"Are you sure you want to perform this action?\");' {$isActive}><span class='slider round'></span></label>
                                         <a href='edit-permission.php?id=".$row['id']."' class='btn btn-sm btn-primary'><i class='fas fa-edit'></i></a>
@@ -177,7 +177,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 $sr++;
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='text-center'>No Roles found</td></tr>";
+                            echo "<tr><td colspan='3' class='text-center'>No Permission found</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -227,7 +227,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         let status = $(this).is(':checked') ? 1 : 2; // 1 for Active, 2 for Inactive
 
         $.ajax({
-            url: "toggle-role.php",
+            url: "toggle-permission.php",
             type: "POST",
             data: { id: id, status: status },
             dataType: "json",
