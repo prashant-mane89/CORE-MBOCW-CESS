@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p>We recommend changing your password after your first login.</p>
                 <br>
                 <p>Best regards,</p>
-                <p>The Application Team</p>
+                <p>MBOCW CESS Team</p>
                 ";
             } else {
                 // This is the message for users who do not require a login.
